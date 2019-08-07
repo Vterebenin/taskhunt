@@ -1,0 +1,13 @@
+import React from 'react';
+import './App.css';
+import MainLayout from './components/MainLayout/Index'
+
+function App() {
+  return (
+    <>
+      <MainLayout />
+    </>
+  );
+}
+
+export default App;
