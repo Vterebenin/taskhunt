@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  isHunted: false
+  TaskTitle: MyString
+  TaskDesc: MyText
+  TaskId: 1
+
+two:
+  isHunted: false
+  TaskTitle: MyString
+  TaskDesc: MyText
+  TaskId: 1

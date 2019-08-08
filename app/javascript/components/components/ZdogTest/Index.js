@@ -15,17 +15,17 @@ function Guy() {
 	let t = 0
 	useRender(() => {
 		if ((ref.current.rotate.y < 0.4) && (spinDirection === 'left')) {
-			ref.current.rotate.y += 0.001
-			ref.current.rotate.z += 0.001
+			ref.current.rotate.y += 0.005
+			ref.current.rotate.z += 0.005
 		} else if (ref.current.rotate.y > -0.4) {
 			spinDirection = 'right'
-			ref.current.rotate.y -= 0.001
-			ref.current.rotate.z -= 0.001
+			ref.current.rotate.y -= 0.005
+			ref.current.rotate.z -= 0.005
 
 		} else if (ref.current.rotate.y < -0.4) {
 			spinDirection = 'left'
-			ref.current.rotate.y -= 0.001
-			ref.current.rotate.z -= 0.001
+			ref.current.rotate.y -= 0.005
+			ref.current.rotate.z -= 0.005
 
 		}
 
@@ -96,14 +96,25 @@ function Guy() {
 				{/* 🚬 сижка */}
 				<Shape
 					path={[
-						{ x: 0, y: 0 },
+						{ x: 1, y: 0 },
 						{ x: 4, y: 0 },
 					]}
 					stroke={0.5}
 					closed={false}
 					translate={{ y: 2, x: 2, z: 6.5 }}
 					rotate={{ x: TAU / 6, y: TAU / 4, z: TAU / 4 }}
-					color={'red'}
+					color={'white'}
+				/>
+				<Shape
+					path={[
+						{ x: 0, y: 0 },
+						{ x: 1, y: 0 },
+					]}
+					stroke={0.5}
+					closed={false}
+					translate={{ y: 2, x: 2, z: 6.5 }}
+					rotate={{ x: TAU / 6, y: TAU / 4, z: TAU / 4 }}
+					color={'orange'}
 				/>
 				{/* 😒 голова  */}
 				<Box

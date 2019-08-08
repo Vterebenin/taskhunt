@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ishunted:</strong>
+  <%= @hunted_task.isHunted %>
+</p>
+
+<p>
+  <strong>Tasktitle:</strong>
+  <%= @hunted_task.TaskTitle %>
+</p>
+
+<p>
+  <strong>Taskdesc:</strong>
+  <%= @hunted_task.TaskDesc %>
+</p>
+
+<p>
+  <strong>Taskid:</strong>
+  <%= @hunted_task.TaskId %>
+</p>
+
+<%= link_to 'Edit', edit_hunted_task_path(@hunted_task) %> |
+<%= link_to 'Back', hunted_tasks_path %>

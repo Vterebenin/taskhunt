@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Hunted Tasks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ishunted</th>
+      <th>Tasktitle</th>
+      <th>Taskdesc</th>
+      <th>Taskid</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @hunted_tasks.each do |hunted_task| %>
+      <tr>
+        <td><%= hunted_task.isHunted %></td>
+        <td><%= hunted_task.TaskTitle %></td>
+        <td><%= hunted_task.TaskDesc %></td>
+        <td><%= hunted_task.TaskId %></td>
+        <td><%= link_to 'Show', hunted_task %></td>
+        <td><%= link_to 'Edit', edit_hunted_task_path(hunted_task) %></td>
+        <td><%= link_to 'Destroy', hunted_task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Hunted Task', new_hunted_task_path %>

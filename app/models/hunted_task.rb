@@ -1,0 +1,2 @@
+class HuntedTask < ApplicationRecord
+end

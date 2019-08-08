@@ -1,0 +1,37 @@
+<%= form_with(model: hunted_task, local: true) do |form| %>
+  <% if hunted_task.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(hunted_task.errors.count, "error") %> prohibited this hunted_task from being saved:</h2>
+
+      <ul>
+      <% hunted_task.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :isHunted %>
+    <%= form.check_box :isHunted %>
+  </div>
+
+  <div class="field">
+    <%= form.label :TaskTitle %>
+    <%= form.text_field :TaskTitle %>
+  </div>
+
+  <div class="field">
+    <%= form.label :TaskDesc %>
+    <%= form.text_area :TaskDesc %>
+  </div>
+
+  <div class="field">
+    <%= form.label :TaskId %>
+    <%= form.number_field :TaskId %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
