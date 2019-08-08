@@ -12,12 +12,13 @@ function MainLayout() {
   const [loading, setLoading] = useState(false)
   const [initialTasks, setinitialTasks] = useState(null)
   const [hunted, setHunted] = useState(null)
+  const [lastId, setLastId] = useState(0)
 
   function fetchTasks() {
     let tasks = axios.get(`http://localhost:3000/hunted_tasks.json`)
       .then(response => {
         return response.data
-       
+
       })
     tasks.then(tasks => {
       hunted !== tasks ? setHunted(tasks) : false
@@ -34,7 +35,9 @@ function MainLayout() {
   }, [initialTasks])
 
   useEffect(() => {
-    console.log(hunted, "new hunted")
+    if ((hunted !== null) && (hunted.length > 0)) {
+      setLastId(hunted[hunted.length - 1].id + 1)
+    }
   }, [hunted])
 
   function handleNameChange(event) {
@@ -59,24 +62,41 @@ function MainLayout() {
     event.preventDefault();
   }
 
-  function handleDestroyClick(idOfTask) {
-    axios.delete(`http://localhost:3000/hunted_tasks/${idOfTask}.json`)
-        .then(function (response) {
-          console.log(response, "response");
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        fetchTasks();
+  function handleDestroyClick(task) {
+    axios.delete(`http://localhost:3000/hunted_tasks/${task.id}.json`)
+      .then(function (response) {
+        console.log(response, "response");
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+
+    let array = [...hunted]; // make a separate copy of the array
+    const index = array.indexOf(task)
+    if (index !== -1) {
+      array.splice(index, 1);
+      setHunted(array);
+    }
+  }
+
+  function search(nameKey, obj) {
+    for (let item in obj)  {
+      if (obj[item].TaskId === nameKey) {
+        return true
+      }
+    }
+    return false
   }
 
   function handleTaskClick(taskId) {
     const taskObj = {
+      id: lastId,
       TaskId: taskId
     }
-    if (hunted.includes(taskId)) {
+    
+    if (search(taskObj.TaskId, hunted)) {
+      alert("Этот таск уже ждет своего охотника...🔫")
       return false
-
     } else {
       axios.post('http://localhost:3000/hunted_tasks.json', {
         isHunted: 'false',
@@ -90,9 +110,10 @@ function MainLayout() {
         .catch(function (error) {
           console.log(error);
         })
-      
+
       setHunted([...hunted, taskObj])
     }
+    
   }
 
   const listOf = (tasks, canBeHunted = false, canBeDestroyed = false) => {
@@ -101,8 +122,8 @@ function MainLayout() {
       return (
         <li key={task.id || idOfTask} >
           <a href={`https://redmine.twinscom.ru/issues/${idOfTask}`}>{idOfTask}</a>
-          {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Назначить охоту</button>}
-          {canBeDestroyed && <button onClick={() => handleDestroyClick(task.id)}> начать охоту</button>} 
+          {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Объявить охоту</button>}
+          {canBeDestroyed && <button onClick={() => handleDestroyClick(task)}> начать охоту</button>}
         </li>
       )
     })
