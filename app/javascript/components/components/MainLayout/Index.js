@@ -10,12 +10,32 @@ function MainLayout() {
   const [username, setUsername] = useState('')
   const [pass, setPass] = useState('')
   const [loading, setLoading] = useState(false)
-  const [hunted, setHunted] = useState([])
+  const [initialTasks, setinitialTasks] = useState(null)
+  const [hunted, setHunted] = useState(null)
+
+  function fetchTasks() {
+    let tasks = axios.get(`http://localhost:3000/hunted_tasks.json`)
+      .then(response => {
+        return response.data
+       
+      })
+    tasks.then(tasks => {
+      hunted !== tasks ? setHunted(tasks) : false
+      // initialTasks !== tasks ? setinitialTasks(tasks) : false
+      return true
+    })
+    console.log(initialTasks, "initial")
+    console.log(hunted, "hunted");
+  }
 
   useEffect(() => {
+    // фетчим список тасков в данный момент
+    fetchTasks()
+  }, [initialTasks])
 
-
-  })
+  useEffect(() => {
+    console.log(hunted, "new hunted")
+  }, [hunted])
 
   function handleNameChange(event) {
     setUsername(event.target.value)
@@ -39,20 +59,50 @@ function MainLayout() {
     event.preventDefault();
   }
 
-  function handleTaskClick(taskId) {
-    console.log(hunted);
-    return hunted.includes(taskId)
-      ? false
-      : setHunted([...hunted, taskId])
+  function handleDestroyClick(idOfTask) {
+    axios.delete(`http://localhost:3000/hunted_tasks/${idOfTask}.json`)
+        .then(function (response) {
+          console.log(response, "response");
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        fetchTasks();
   }
 
-  const listOf = (tasks, canBeHunted = false) => {
+  function handleTaskClick(taskId) {
+    const taskObj = {
+      TaskId: taskId
+    }
+    if (hunted.includes(taskId)) {
+      return false
+
+    } else {
+      axios.post('http://localhost:3000/hunted_tasks.json', {
+        isHunted: 'false',
+        TaskTitle: 'test1',
+        TaskDesc: 'test2',
+        TaskId: taskId
+      })
+        .then(function (response) {
+          console.log(response, "response");
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+      
+      setHunted([...hunted, taskObj])
+    }
+  }
+
+  const listOf = (tasks, canBeHunted = false, canBeDestroyed = false) => {
     return tasks.map((task) => {
-      const taskId = task.id || task
+      const idOfTask = task.TaskId || task.id || task
       return (
-        <li key={taskId} >
-          <a href={`https://redmine.twinscom.ru/issues/${taskId}`}>{taskId}</a>
-          {canBeHunted && <span onClick={() => handleTaskClick(taskId)}>Назначить охоту</span>}
+        <li key={task.id || idOfTask} >
+          <a href={`https://redmine.twinscom.ru/issues/${idOfTask}`}>{idOfTask}</a>
+          {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Назначить охоту</button>}
+          {canBeDestroyed && <button onClick={() => handleDestroyClick(task.id)}> начать охоту</button>} 
         </li>
       )
     })
@@ -76,17 +126,17 @@ function MainLayout() {
       </form>
       {tasks &&
         <React.Fragment>
-          <h2>Твои таски:</h2>
+          <h2>Твои  таски:</h2>
           <ul>
             {listOf(tasks, true)}
           </ul>
         </React.Fragment>
       }
-      {hunted.length > 0 &&
+      {hunted !== null && hunted.length > 0 &&
         <React.Fragment>
           <h2>Текущие таски поставленные в охоту:</h2>
           <ul>
-            {listOf(hunted)}
+            {listOf(hunted, false, true)}
           </ul>
         </React.Fragment>
       }

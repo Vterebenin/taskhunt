@@ -1,4 +1,5 @@
 class HuntedTasksController < ApplicationController
+  protect_from_forgery with: :null_session
   before_action :set_hunted_task, only: [:show, :edit, :update, :destroy]
 
   # GET /hunted_tasks
@@ -61,7 +62,7 @@ class HuntedTasksController < ApplicationController
     end
   end
 
-  private
+  # private
     # Use callbacks to share common setup or constraints between actions.
     def set_hunted_task
       @hunted_task = HuntedTask.find(params[:id])
