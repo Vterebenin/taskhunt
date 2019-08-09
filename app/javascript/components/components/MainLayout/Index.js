@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { withRouter } from 'react-router-dom';
 
-function MainLayout() {
+function MainLayout(props) {
+  const cors_hack = "https://cors-anywhere.herokuapp.com"
   const config = {
-    url: "https://cors-anywhere.herokuapp.com/https://redmine.twinscom.ru"
+   
+    url_redmine: `${cors_hack}/https://redmine.twinscom.ru`,
+    url_taskhunt: `${cors_hack}/https://canape-taskhunt.herokuapp.com`,
+    url_redmine_no_cors: `https://redmine.twinscom.ru`,
+    url_taskhunt_no_cors: `https://canape-taskhunt.herokuapp.com`
   }
 
   const [tasks, setTasks] = useState(null)
@@ -15,7 +21,7 @@ function MainLayout() {
   const [lastId, setLastId] = useState(0)
 
   function fetchTasks() {
-    let tasks = axios.get(`https://canape-taskhunt.herokuapp.com/hunted_tasks.json`)
+    let tasks = axios.get(`${config.url_taskhunt}/hunted_tasks.json`)
       .then(response => {
         return response.data
 
@@ -51,7 +57,7 @@ function MainLayout() {
   function handleSubmit(event) {
     var basicAuth = 'Basic ' + btoa(username + ':' + pass);
     setLoading(true);
-    axios.get(`${config.url}/issues.json?assigned_to_id=me`, {
+    axios.get(`${config.url_redmine}/issues.json?assigned_to_id=me`, {
       headers: {
         "Authorization": basicAuth,
       }
@@ -63,7 +69,7 @@ function MainLayout() {
   }
 
   function handleDestroyClick(task) {
-    axios.delete(`https://canape-taskhunt.herokuapp.com/hunted_tasks/${task.id}.json`)
+    axios.delete(`${config.url_taskhunt}/hunted_tasks/${task.id}.json`)
       .then(function (response) {
         console.log(response, "response");
       })
@@ -98,7 +104,7 @@ function MainLayout() {
       alert("Этот таск уже ждет своего охотника...🔫")
       return false
     } else {
-      axios.post('https://canape-taskhunt.herokuapp.com/hunted_tasks.json', {
+      axios.post(`${config.url_taskhunt}/hunted_tasks.json`, {
         isHunted: 'false',
         TaskTitle: 'test1',
         TaskDesc: 'test2',
@@ -121,9 +127,9 @@ function MainLayout() {
       const idOfTask = task.TaskId || task.id || task
       return (
         <li key={task.id || idOfTask} >
-          <a href={`https://redmine.twinscom.ru/issues/${idOfTask}`}>{idOfTask}</a>
+          <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`}>{idOfTask}</a>
           {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Объявить охоту</button>}
-          {canBeDestroyed && <button onClick={() => handleDestroyClick(task)}> начать охоту</button>}
+          {canBeDestroyed && <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank"><button onClick={() => handleDestroyClick(task)}> начать охоту</button></a>}
         </li>
       )
     })
@@ -170,4 +176,4 @@ function MainLayout() {
   )
 }
 
-export default MainLayout
+export default withRouter(MainLayout)
