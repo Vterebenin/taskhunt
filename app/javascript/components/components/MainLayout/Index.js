@@ -15,7 +15,7 @@ function MainLayout() {
   const [lastId, setLastId] = useState(0)
 
   function fetchTasks() {
-    let tasks = axios.get(`https://canape-taskhunt.herokuapp.com/hunted_tasks.json`)
+    let tasks = axios.get(`https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks.json`)
       .then(response => {
         return response.data
 
@@ -63,7 +63,7 @@ function MainLayout() {
   }
 
   function handleDestroyClick(task) {
-    axios.delete(`https://canape-taskhunt.herokuapp.com/hunted_tasks/${task.id}.json`)
+    axios.delete(`https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks/${task.id}.json`)
       .then(function (response) {
         console.log(response, "response");
       })
@@ -98,7 +98,7 @@ function MainLayout() {
       alert("Этот таск уже ждет своего охотника...🔫")
       return false
     } else {
-      axios.post('https://canape-taskhunt.herokuapp.com/hunted_tasks.json', {
+      axios.post('https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks.json', {
         isHunted: 'false',
         TaskTitle: 'test1',
         TaskDesc: 'test2',
