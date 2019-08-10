@@ -137,9 +137,6 @@ export default function Index() {
 	
 	return (
 		<Illustration
-			onDragStart={(pointer) => {
-				console.log(`Drag started at ${pointer.pageX}, ${pointer.pageY}`)
-			}}
 			zoom={10}
 			style={{ width: 300, height: 300 }}
 		>
