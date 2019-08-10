@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { deleteTask, fetchTaskListIfNeeded } from '../../redux/actions'
 import { withRouter } from 'react-router-dom';
 
 function MainLayout(props) {
   const cors_hack = "https://cors-anywhere.herokuapp.com"
   const config = {
-   
     url_redmine: `${cors_hack}/https://redmine.twinscom.ru`,
     url_taskhunt: `${cors_hack}/https://canape-taskhunt.herokuapp.com`,
     url_redmine_no_cors: `https://redmine.twinscom.ru`,
@@ -16,35 +18,23 @@ function MainLayout(props) {
   const [username, setUsername] = useState('')
   const [pass, setPass] = useState('')
   const [loading, setLoading] = useState(false)
-  const [initialTasks, setinitialTasks] = useState(null)
   const [hunted, setHunted] = useState(null)
   const [lastId, setLastId] = useState(0)
 
-  function fetchTasks() {
-    let tasks = axios.get(`${config.url_taskhunt}/hunted_tasks.json`)
-      .then(response => {
-        return response.data
-
-      })
-    tasks.then(tasks => {
-      hunted !== tasks ? setHunted(tasks) : false
-      // initialTasks !== tasks ? setinitialTasks(tasks) : false
-      return true
-    })
-    console.log(initialTasks, "initial")
-    console.log(hunted, "hunted");
-  }
+  const { dispatch } = props
+  const { taskListR } = props
 
   useEffect(() => {
     // фетчим список тасков в данный момент
-    fetchTasks()
-  }, [initialTasks])
+    dispatch(fetchTaskListIfNeeded())
+    taskListR !== undefined ? setHunted(taskListR) : ''
+  }, [taskListR])
 
   useEffect(() => {
     if ((hunted !== null) && (hunted.length > 0)) {
       setLastId(hunted[hunted.length - 1].id + 1)
     }
-  }, [hunted])
+  }, [taskListR, hunted])
 
   function handleNameChange(event) {
     setUsername(event.target.value)
@@ -69,20 +59,7 @@ function MainLayout(props) {
   }
 
   function handleDestroyClick(task) {
-    axios.delete(`${config.url_taskhunt}/hunted_tasks/${task.id}.json`)
-      .then(function (response) {
-        console.log(response, "response");
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-
-    let array = [...hunted]; // make a separate copy of the array
-    const index = array.indexOf(task)
-    if (index !== -1) {
-      array.splice(index, 1);
-      setHunted(array);
-    }
+    dispatch(deleteTask(task, props.taskListR))
   }
 
   function search(nameKey, obj) {
@@ -176,4 +153,11 @@ function MainLayout(props) {
   )
 }
 
-export default withRouter(MainLayout)
+function mapStateToProps(state) {
+  const { taskListR } = state.taskListFromRedmine
+  return {
+      taskListR,
+  }
+}
+
+export default connect(mapStateToProps)(withRouter(MainLayout)) 

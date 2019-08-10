@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Illustration, Ellipse, Rect, Shape, useRender, Box, Cylinder, Anchor } from 'react-zdog'
 // New react-spring target, for native animation outside of React
-import './styles.css'
 
 /** --- Basic, re-usable shapes -------------------------- */
 const TAU = Math.PI * 2
