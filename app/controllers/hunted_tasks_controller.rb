@@ -62,7 +62,7 @@ class HuntedTasksController < ApplicationController
     end
   end
 
-  # private
+  private
     # Use callbacks to share common setup or constraints between actions.
     def set_hunted_task
       @hunted_task = HuntedTask.find(params[:id])
@@ -70,6 +70,6 @@ class HuntedTasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def hunted_task_params
-      params.require(:hunted_task).permit(:TaskId)
+      params.require(:hunted_task).permit(:isHunted,:TaskTitle,:TaskDesc,:author,:deadline,:priority,:status,:project,:estimated_hours,:TaskId)
     end
-end
+end       
