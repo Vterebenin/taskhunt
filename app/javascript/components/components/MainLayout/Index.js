@@ -59,6 +59,55 @@ function MainLayout(props) {
     })
   }
 
+  const listOfUserTasks = (tasks) => {
+    return tasks.map((task) => {
+      const { 
+        id, 
+        author, 
+        description, 
+        estimated_hours, 
+        due_date,  
+        priority,
+        status,
+        project,
+        subject
+      } = task
+      return (
+        <li key={id} >
+          <div>
+            <a href={`${config.url_redmine_no_cors}/issues/${id}`}>{id}</a>
+          </div>
+          <div>
+            Название: {subject}
+          </div> 
+          <div>
+            Автор: {author.name}
+          </div>   
+          <div>
+            Описание: {description}
+          </div>       
+          <div>
+            Заложенные часы: {estimated_hours}
+          </div>
+          <div>
+            дедлайн: {due_date}
+          </div>
+          <div>
+            приоритет: {priority.name}
+          </div>
+          <div>
+            Статус: {status.name}
+          </div>
+          <div>
+            Проект: {project.name}
+          </div>
+          <button onClick={() => announceAHuntClick(task)}>Объявить охоту</button>
+          
+        </li>
+      )
+    })
+  }
+
   return (
     <React.Fragment>
       <form onSubmit={handleSubmit}>
@@ -79,7 +128,7 @@ function MainLayout(props) {
         <React.Fragment>
           <h2>Твои  таски:</h2>
           <ul>
-            {listOf(userTaskList, true)}
+            {listOfUserTasks(userTaskList)}
           </ul>
         </React.Fragment>
       }

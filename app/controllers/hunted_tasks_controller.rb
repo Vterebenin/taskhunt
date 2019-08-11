@@ -70,6 +70,6 @@ class HuntedTasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def hunted_task_params
-      params.require(:hunted_task).permit(:isHunted, :TaskTitle, :TaskDesc, :TaskId)
+      params.require(:hunted_task).permit(:TaskId)
     end
 end

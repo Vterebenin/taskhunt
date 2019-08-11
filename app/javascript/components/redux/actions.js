@@ -139,18 +139,36 @@ function receiveUserTasks(userTaskList) {
 // ! ANNOUNCE_A_HUNT START
 // ************************
 
-export function announceAHunt(taskId, huntedList) {
+export function announceAHunt(task, huntedList) {
   return dispatch => {
-
-    if (search(taskId, huntedList)) {
+    const { 
+      id, 
+      author, 
+      description, 
+      estimated_hours, 
+      due_date,  
+      priority,
+      status,
+      project,
+      subject
+    } = task
+    if (search(id, huntedList)) {
+      // если уже поставлена в охоту
       alert("Этот таск уже ждет своего охотника...🔫")
       return false
     } else {
+      // иначе пушим в базу данных
       axios.post(`${config.url_taskhunt}/hunted_tasks.json`, {
         isHunted: 'false',
-        TaskTitle: 'test1',
-        TaskDesc: 'test2',
-        TaskId: taskId
+        TaskTitle: subject,
+        TaskDesc: description,
+        author: author,
+        deadline: due_date,
+        priority: priority,
+        status: status,
+        project: project,
+        estimated_hours: estimated_hours,
+        TaskId: id
       })
         .then(function (refreshedTaskList) {
           dispatch(refreshTaskList(refreshedTaskList, ANNOUNCE_A_HUNT))
