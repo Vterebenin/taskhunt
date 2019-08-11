@@ -62,7 +62,6 @@ class HuntedTasksController < ApplicationController
     end
   end
 
-  private
     # Use callbacks to share common setup or constraints between actions.
     def set_hunted_task
       @hunted_task = HuntedTask.find(params[:id])
