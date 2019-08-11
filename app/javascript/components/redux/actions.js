@@ -36,13 +36,11 @@ function search(nameKey, obj) {
 
 export function fetchTasksList() {
   return dispatch => {
-    dispatch(setLoading(true))
     return axios.get(`${config.url_taskhunt}/hunted_tasks.json`)
       .then(response => {
         return response.data
       })
       .then(taskListTH => {
-        dispatch(setLoading(false))
         dispatch(refreshTaskList(taskListTH, FETCH_TASKLIST))
       })
   }

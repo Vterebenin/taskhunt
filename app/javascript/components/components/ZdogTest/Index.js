@@ -42,7 +42,6 @@ function Guy() {
 		}	else {
 			ref.current.rotate.y = -0.28
 		}
-		console.log(ref.current.rotate.y, "y", ref.current.rotate.x, "x");
 	})
 	return (
 		<Anchor ref={ref}>
