@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const FETCH_TASKLIST_R = 'FETCH_TASKLIST_R'
+export const FETCH_TASKLIST = 'FETCH_TASKLIST'
 export const HUNT_TASK = 'HUNT_TASK'
 export const FETCH_TASKLIST_REDMINE = 'FETCH_TASKLIST_REDMINE'
 export const ANNOUNCE_A_HUNT = 'ANNOUNCE_A_HUNT'
@@ -31,16 +31,20 @@ function search(nameKey, obj) {
 }
 
 // ************************
-// ! FETCH_TASKLIST_R START
+// ! FETCH_TASKLIST START
 // ************************
 
 export function fetchTasksList() {
   return dispatch => {
+    dispatch(setLoading(true))
     return axios.get(`${config.url_taskhunt}/hunted_tasks.json`)
       .then(response => {
         return response.data
       })
-      .then(taskListTH => dispatch(refreshTaskList(taskListTH, FETCH_TASKLIST_R)))
+      .then(taskListTH => {
+        dispatch(setLoading(false))
+        dispatch(refreshTaskList(taskListTH, FETCH_TASKLIST))
+      })
   }
 }
 
@@ -62,7 +66,7 @@ export function fetchTaskListIfNeeded() {
 }
 
 // ************************
-// ! FETCH_TASKLIST_R END
+// ! FETCH_TASKLIST END
 // ************************
 
 // ************************

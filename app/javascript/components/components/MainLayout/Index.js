@@ -1,25 +1,15 @@
-import axios from 'axios'
-
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
+import { config } from '../helpers/Index'
 import {
   deleteTask,
   fetchTaskListIfNeeded,
   fetchUserTasks,
-  fetchTasksList,
   announceAHunt
 } from '../../redux/actions'
 import { withRouter } from 'react-router-dom';
 
 function MainLayout(props) {
-
-  const cors_hack = "https://cors-anywhere.herokuapp.com"
-  const config = {
-    url_redmine: `${cors_hack}/https://redmine.twinscom.ru`,
-    url_taskhunt: `${cors_hack}/https://canape-taskhunt.herokuapp.com`,
-    url_redmine_no_cors: `https://redmine.twinscom.ru`,
-    url_taskhunt_no_cors: `https://canape-taskhunt.herokuapp.com`
-  }
 
   const [username, setUsername] = useState('')
   const [pass, setPass] = useState('')
@@ -41,23 +31,29 @@ function MainLayout(props) {
     dispatch(fetchUserTasks(event, username, pass))
   }
 
-  function handleDestroyClick(task) {
+  function huntClick(task) {
     dispatch(deleteTask(task, taskListTH))
   }
 
-  function handleTaskClick(taskId) {
+  function announceAHuntClick(taskId) {
     dispatch(announceAHunt(taskId, taskListTH))
-    
+
   }
 
   const listOf = (tasks, canBeHunted = false, canBeDestroyed = false) => {
     return tasks.map((task) => {
-      const idOfTask = task.TaskId || task.id || task
+      const idOfTask = task.TaskId || task.id
       return (
-        <li key={task.id || idOfTask} >
+        <li key={idOfTask} >
           <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`}>{idOfTask}</a>
-          {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Объявить охоту</button>}
-          {canBeDestroyed && <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank"><button onClick={() => handleDestroyClick(task)}> начать охоту</button></a>}
+          {canBeHunted &&
+            <button onClick={() => announceAHuntClick(idOfTask)}>Объявить охоту</button>
+          }
+          {canBeDestroyed &&
+            <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank">
+              <button onClick={() => huntClick(task)}>Начать охоту</button>
+            </a>
+          }
         </li>
       )
     })

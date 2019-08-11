@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import {
-  FETCH_TASKLIST_R, 
+  FETCH_TASKLIST, 
   HUNT_TASK,
   FETCH_TASKLIST_REDMINE,
   ANNOUNCE_A_HUNT
@@ -12,7 +12,7 @@ function taskList(state = {}, action) {
   switch (action.type) {
     case HUNT_TASK: 
     case ANNOUNCE_A_HUNT:
-    case FETCH_TASKLIST_R:
+    case FETCH_TASKLIST:
       return Object.assign({}, state, {
         taskListTH: action.taskListTH,
         lastUpdated: action.receivedAt
