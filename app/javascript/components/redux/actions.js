@@ -12,6 +12,7 @@ const config = {
   url_redmine_no_cors: `https://redmine.twinscom.ru`,
   url_taskhunt_no_cors: `https://canape-taskhunt.herokuapp.com`
 }
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 function refreshTaskList(newTaskList, type) {
   return {
@@ -36,7 +37,14 @@ function search(nameKey, obj) {
 
 export function fetchTasksList() {
   return dispatch => {
-    return axios.get(`${config.url_taskhunt}/hunted_tasks.json`)
+    return axios.get(
+      `${config.url_taskhunt_no_cors}/hunted_tasks.json`,
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      }
+    )
       .then(response => {
         return response.data
       })
@@ -141,12 +149,12 @@ function receiveUserTasks(userTaskList) {
 
 export function announceAHunt(task, huntedList) {
   return dispatch => {
-    const { 
-      id, 
-      author, 
-      description, 
-      estimated_hours, 
-      due_date,  
+    const {
+      id,
+      author,
+      description,
+      estimated_hours,
+      due_date,
       priority,
       status,
       project,
