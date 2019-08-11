@@ -50,7 +50,7 @@ function MainLayout(props) {
             <button onClick={() => announceAHuntClick(idOfTask)}>Объявить охоту</button>
           }
           {canBeDestroyed &&
-            <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank">
+            <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank" rel="noopener noreferrer">
               <button onClick={() => huntClick(task)}>Начать охоту</button>
             </a>
           }
