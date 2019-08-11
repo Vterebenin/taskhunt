@@ -37,14 +37,7 @@ function search(nameKey, obj) {
 
 export function fetchTasksList() {
   return dispatch => {
-    return axios.get(
-      `${config.url_taskhunt_no_cors}/hunted_tasks.json`,
-      {
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-      }
-    )
+    return axios.get(`${config.url_taskhunt_no_cors}/hunted_tasks.json`)
       .then(response => {
         return response.data
       })
@@ -81,7 +74,7 @@ export function fetchTaskListIfNeeded() {
 
 export function deleteTask(task, currentTaskList) {
   return dispatch => {
-    axios.delete(`${config.url_taskhunt}/hunted_tasks/${task.id}.json`)
+    axios.delete(`${config.url_taskhunt_no_cors}/hunted_tasks/${task.id}.json`)
       .then(function (response) {
         console.log(response, "response");
       })
@@ -166,7 +159,7 @@ export function announceAHunt(task, huntedList) {
       return false
     } else {
       // иначе пушим в базу данных
-      axios.post(`${config.url_taskhunt}/hunted_tasks.json`, {
+      axios.post(`${config.url_taskhunt_no_cors}/hunted_tasks.json`, {
         isHunted: 'false',
         TaskTitle: subject,
         TaskDesc: description,
