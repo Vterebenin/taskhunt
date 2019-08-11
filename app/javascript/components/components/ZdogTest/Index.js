@@ -12,24 +12,29 @@ function Guy() {
 	let spinDirection = 'left'
 	const ref = useRef()
 	let t = 0
+	let mouseX, mouseY;
+	window.addEventListener("mousemove", function(e) {
+		console.log(e.clientX, e.clientY)
+		mouseX = e.clientX
+		mouseY = e.clientY
+	})
 	useRender(() => {
-		if ((ref.current.rotate.y < 0.4) && (spinDirection === 'left')) {
-			ref.current.rotate.y += 0.005
-			ref.current.rotate.z += 0.005
-		} else if (ref.current.rotate.y > -0.4) {
-			spinDirection = 'right'
-			ref.current.rotate.y -= 0.005
-			ref.current.rotate.z -= 0.005
+		// if ((ref.current.rotate.y < 0.4) && (spinDirection === 'left')) {
+		// 	ref.current.rotate.y += 0.005
+		// 	ref.current.rotate.z += 0.005
+		// } else if (ref.current.rotate.y > -0.4) {
+		// 	spinDirection = 'right'
+		// 	ref.current.rotate.y -= 0.005
+		// 	ref.current.rotate.z -= 0.005
 
-		} else if (ref.current.rotate.y < -0.4) {
-			spinDirection = 'left'
-			ref.current.rotate.y -= 0.005
-			ref.current.rotate.z -= 0.005
+		// } else if (ref.current.rotate.y < -0.4) {
+		// 	spinDirection = 'left'
+		// 	ref.current.rotate.y -= 0.005
+		// 	ref.current.rotate.z -= 0.005
+		// }
 
-		}
-
-		// ref.current.rotate.y = Math.cos((t += 0.1) / TAU)
-		// ref.current.rotate.x = Math.sin((t += 0.1) / TAU)
+		ref.current.rotate.x = - mouseY / 5000
+		ref.current.rotate.y = - mouseX / 5000
 	})
 	return (
 		<Anchor ref={ref}>
@@ -138,6 +143,7 @@ export default function Index() {
 	return (
 		<Illustration
 			zoom={10}
+			className="th-hunter"
 			style={{ width: 300, height: 300 }}
 		>
 			<Guy />
