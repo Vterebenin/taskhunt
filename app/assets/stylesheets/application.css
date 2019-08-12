@@ -15,5 +15,8 @@
  */
  html,body {
   background-color: #282c34;
-  color: #ffffff;
+  color: #fff;
+}
+.th-hunter {
+  margin: 0 auto;
 }

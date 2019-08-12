@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_08_074354) do
+ActiveRecord::Schema.define(version: 2019_08_11_201628) do
 
   create_table "hunted_tasks", force: :cascade do |t|
     t.boolean "isHunted"
@@ -19,6 +19,12 @@ ActiveRecord::Schema.define(version: 2019_08_08_074354) do
     t.integer "TaskId"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "author"
+    t.string "deadline"
+    t.string "priority"
+    t.string "status"
+    t.string "project"
+    t.float "estimated_hours"
   end
 
 end

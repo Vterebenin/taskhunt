@@ -1,44 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { connect } from 'react-redux'
+import { config } from '../helpers/Index'
+import {
+  deleteTask,
+  fetchTaskListIfNeeded,
+  fetchUserTasks,
+  announceAHunt
+} from '../../redux/actions'
+import { withRouter } from 'react-router-dom';
 
-function MainLayout() {
-  const config = {
-    url: "https://cors-anywhere.herokuapp.com/https://redmine.twinscom.ru"
-  }
+function MainLayout(props) {
 
-  const [tasks, setTasks] = useState(null)
   const [username, setUsername] = useState('')
   const [pass, setPass] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [initialTasks, setinitialTasks] = useState(null)
-  const [hunted, setHunted] = useState(null)
-  const [lastId, setLastId] = useState(0)
-
-  function fetchTasks() {
-    let tasks = axios.get(`https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks.json`)
-      .then(response => {
-        return response.data
-
-      })
-    tasks.then(tasks => {
-      hunted !== tasks ? setHunted(tasks) : false
-      // initialTasks !== tasks ? setinitialTasks(tasks) : false
-      return true
-    })
-    console.log(initialTasks, "initial")
-    console.log(hunted, "hunted");
-  }
+  const { dispatch, loading, userTaskList, taskListTH } = props
 
   useEffect(() => {
-    // фетчим список тасков в данный момент
-    fetchTasks()
-  }, [initialTasks])
-
-  useEffect(() => {
-    if ((hunted !== null) && (hunted.length > 0)) {
-      setLastId(hunted[hunted.length - 1].id + 1)
-    }
-  }, [hunted])
+    dispatch(fetchTaskListIfNeeded())
+  }, [taskListTH])
 
   function handleNameChange(event) {
     setUsername(event.target.value)
@@ -49,81 +28,81 @@ function MainLayout() {
   }
 
   function handleSubmit(event) {
-    var basicAuth = 'Basic ' + btoa(username + ':' + pass);
-    setLoading(true);
-    axios.get(`${config.url}/issues.json?assigned_to_id=me`, {
-      headers: {
-        "Authorization": basicAuth,
-      }
-    })
-      .then(response => response.data)
-      .then(data => { setLoading(false); setTasks(data.issues) })
-
-    event.preventDefault();
+    dispatch(fetchUserTasks(event, username, pass))
   }
 
-  function handleDestroyClick(task) {
-    axios.delete(`https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks/${task.id}.json`)
-      .then(function (response) {
-        console.log(response, "response");
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-
-    let array = [...hunted]; // make a separate copy of the array
-    const index = array.indexOf(task)
-    if (index !== -1) {
-      array.splice(index, 1);
-      setHunted(array);
-    }
+  function huntClick(task) {
+    dispatch(deleteTask(task, taskListTH))
   }
 
-  function search(nameKey, obj) {
-    for (let item in obj)  {
-      if (obj[item].TaskId === nameKey) {
-        return true
-      }
-    }
-    return false
-  }
+  function announceAHuntClick(taskId) {
+    dispatch(announceAHunt(taskId, taskListTH))
 
-  function handleTaskClick(taskId) {
-    const taskObj = {
-      id: lastId,
-      TaskId: taskId
-    }
-    
-    if (search(taskObj.TaskId, hunted)) {
-      alert("Этот таск уже ждет своего охотника...🔫")
-      return false
-    } else {
-      axios.post('https://cors-anywhere.herokuapp.com/https://canape-taskhunt.herokuapp.com/hunted_tasks.json', {
-        isHunted: 'false',
-        TaskTitle: 'test1',
-        TaskDesc: 'test2',
-        TaskId: taskId
-      })
-        .then(function (response) {
-          console.log(response, "response");
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-
-      setHunted([...hunted, taskObj])
-    }
-    
   }
 
   const listOf = (tasks, canBeHunted = false, canBeDestroyed = false) => {
     return tasks.map((task) => {
-      const idOfTask = task.TaskId || task.id || task
+      const idOfTask = task.TaskId || task.id
       return (
-        <li key={task.id || idOfTask} >
-          <a href={`https://redmine.twinscom.ru/issues/${idOfTask}`}>{idOfTask}</a>
-          {canBeHunted && <button onClick={() => handleTaskClick(idOfTask)}>Объявить охоту</button>}
-          {canBeDestroyed && <button onClick={() => handleDestroyClick(task)}> начать охоту</button>}
+        <li key={idOfTask} >
+          <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`}>{idOfTask}</a>
+          {canBeHunted &&
+            <button onClick={() => announceAHuntClick(idOfTask)}>Объявить охоту</button>
+          }
+          {canBeDestroyed &&
+            <a href={`${config.url_redmine_no_cors}/issues/${idOfTask}`} target="_blank" rel="noopener noreferrer">
+              <button onClick={() => huntClick(task)}>Начать охоту</button>
+            </a>
+          }
+        </li>
+      )
+    })
+  }
+
+  const listOfUserTasks = (tasks) => {
+    return tasks.map((task) => {
+      const { 
+        id, 
+        author, 
+        description, 
+        estimated_hours, 
+        due_date,  
+        priority,
+        status,
+        project,
+        subject
+      } = task
+      return (
+        <li key={id} >
+          <div>
+            <a href={`${config.url_redmine_no_cors}/issues/${id}`}>{id}</a>
+          </div>
+          <div>
+            Название: {subject}
+          </div> 
+          <div>
+            Автор: {author.name}
+          </div>   
+          <div>
+            Описание: {description}
+          </div>       
+          <div>
+            Заложенные часы: {estimated_hours}
+          </div>
+          <div>
+            дедлайн: {due_date}
+          </div>
+          <div>
+            приоритет: {priority.name}
+          </div>
+          <div>
+            Статус: {status.name}
+          </div>
+          <div>
+            Проект: {project.name}
+          </div>
+          <button onClick={() => announceAHuntClick(task)}>Объявить охоту</button>
+          
         </li>
       )
     })
@@ -145,23 +124,23 @@ function MainLayout() {
         </div>
         <input type="submit" value="Войти" />
       </form>
-      {tasks &&
+      {userTaskList &&
         <React.Fragment>
           <h2>Твои  таски:</h2>
           <ul>
-            {listOf(tasks, true)}
+            {listOfUserTasks(userTaskList)}
           </ul>
         </React.Fragment>
       }
-      {hunted !== null && hunted.length > 0 &&
+      {taskListTH && taskListTH.length > 0 &&
         <React.Fragment>
           <h2>Текущие таски поставленные в охоту:</h2>
           <ul>
-            {listOf(hunted, false, true)}
+            {listOf(taskListTH, false, true)}
           </ul>
         </React.Fragment>
       }
-      {!tasks && loading &&
+      {!userTaskList && loading &&
         <React.Fragment>
           <h1> Я тут фетчу вообще-та... </h1>
         </React.Fragment>
@@ -170,4 +149,14 @@ function MainLayout() {
   )
 }
 
-export default MainLayout
+function mapStateToProps(state) {
+  const { taskListTH } = state.taskList
+  const { loading, userTaskList } = state.taskListRedmine
+  return {
+    taskListTH,
+    loading,
+    userTaskList
+  }
+}
+
+export default connect(mapStateToProps)(withRouter(MainLayout)) 
